@@ -1,2 +1,2 @@
 # progetto-Info
-è un progetto di pygames voluto dal prof per la verifica
+è un gioco semplice, sei una macchina e devi muoverti nel traffico senza colpire nessun altro veicolo in transito
