@@ -3,7 +3,7 @@ import random
 import sys
 
 
-pygame.init()
+pygame.init()  
 
 
 WIDTH, HEIGHT = 500, 700
@@ -11,6 +11,8 @@ LANE_WIDTH = WIDTH // 5
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Gioco della Macchinina")
 
+player_image = pygame.image.load("1_player.png").convert_alpha()
+enemy_image = pygame.image.load("4_blu.png").convert_alpha()
 
 WHITE = (255, 255, 255)
 GRAY = (50, 50, 50)
@@ -21,11 +23,14 @@ BLUE = (0, 0, 200)
 clock = pygame.time.Clock()
 FPS = 60
 
-car_width, car_height = 40, 80
+car_width, car_height = 35, 70
 player_lane = 2
 player_x = player_lane * LANE_WIDTH + (LANE_WIDTH - car_width) // 2
 player_y = HEIGHT - car_height - 20
-player_speed = 5
+player_speed = 5 
+
+player_image = pygame.transform.scale(player_image, (car_width, car_height))
+enemy_image = pygame.transform.scale(enemy_image, (car_width, car_height))
 
 enemy_cars = []
 enemy_timer = 0
@@ -33,10 +38,10 @@ enemy_delay = 40
 enemy_speed = 5
 
 def draw_player(x, y):
-    pygame.draw.rect(screen, BLUE, (x, y, car_width, car_height))
+    screen.blit(player_image, (x, y))
 
 def draw_enemy(x, y):
-    pygame.draw.rect(screen, RED, (x, y, car_width, car_height))
+    screen.blit(enemy_image, (x, y))
 
 def spawn_enemy():
     lane = random.randint(0, 4)
@@ -59,10 +64,10 @@ running = True
 while running:
     screen.fill(GRAY)
 
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-
 
     keys = pygame.key.get_pressed()
     if keys[pygame.K_LEFT]:
