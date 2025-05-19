@@ -6,7 +6,7 @@ import sys
 pygame.init()  
 
 # Schermo
-WIDTH, HEIGHT = 500, 700
+WIDTH, HEIGHT = 600, 700
 LANE_WIDTH = WIDTH // 5
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Gioco della Macchinina")
@@ -35,6 +35,14 @@ enemy_images = [
     pygame.image.load("5_rosso.png").convert_alpha(),
     pygame.image.load("5_verde.png").convert_alpha(),
 ]
+
+bg = pygame.image.load("erba_fiori.png").convert_alpha()
+
+bg_width = 50
+bg = pygame.transform.scale(bg, (bg_width, bg.get_height()))  # solo in larghezza
+bg_sx = bg  # non scalare in altezza
+bg_dx = pygame.transform.flip(bg, True, False)
+
 # Colori
 WHITE = (255, 255, 255)
 GRAY = (50, 50, 50)
@@ -46,22 +54,23 @@ clock = pygame.time.Clock()
 FPS = 60
 
 # Macchinina del giocatore
-car_width, car_height = 45, 90 
+car_width, car_height = 50, 100 
 player_lane = 2
-player_x = player_lane * LANE_WIDTH + (LANE_WIDTH - car_width) // 2
+road_x = bg_width
+road_width = WIDTH - 2 * bg_width
+player_x = road_x + player_lane * (road_width // 5) + ((road_width // 5) - car_width) // 2
 player_y = HEIGHT - car_height - 20
-player_speed = 7 
-
-player_images = [pygame.transform.scale(img, (car_width, car_height)) for img in player_images]
-
-player_image  = random.choice(player_images)     
-enemy_images = [pygame.transform.scale(img, (car_width, car_height)) for img in enemy_images]
+player_speed = 5 
 
 # Altri veicoli
 enemy_cars = []
 enemy_timer = 0
 enemy_delay = 40
-enemy_speed = 5
+
+player_images = [pygame.transform.scale(img, (car_width, car_height)) for img in player_images]
+
+player_image  = random.choice(player_images)     
+enemy_images = [pygame.transform.scale(img, (car_width, car_height)) for img in enemy_images]
 
 def draw_player(x, y, image):
     screen.blit(image, (x, y))
@@ -71,7 +80,7 @@ def draw_enemy(x, y, image):
 
 def spawn_enemy():
     lane = random.randint(0, 4)
-    x = lane * LANE_WIDTH + (LANE_WIDTH - car_width) // 2
+    x = road_x + lane * (road_width // 5) + ((road_width // 5) - car_width) // 2
     y = -car_height
     image = random.choice(enemy_images)
     enemy_cars.append([x, y, image])
@@ -87,19 +96,41 @@ def check_collision(px, py):
 def is_out_of_bounds(px):
     return px < 0 or px + car_width > WIDTH 
 
-# Selezione macchina
+# Font per il testo
+title_font = pygame.font.SysFont(None, 60)      # Font grande per "MENU PRINCIPALE"
+subtitle_font = pygame.font.SysFont(None, 36)   # fon per "Scegli la tua macchina"
+name_font = pygame.font.SysFont(None, 28)       # font per i nomi delle macchine
+
+#Difficoltà delle auto
+car_diff = ["Molto Facile", "Facile", "Media", "Difficile", "Molto Difficile"]
+
+# Menù principale (selezione macchina)
 selected_index = 0
 selecting = True
 
 while selecting:
-    screen.fill(GRAY)
+    screen.fill((30, 30, 30)) 
+    
+    main_title = title_font.render("MENU PRINCIPALE", True, WHITE)
+    screen.blit(main_title, (WIDTH // 2 - main_title.get_width() // 2, 30))
 
-    # Mostra macchina selezionata al centro
+    title_text = subtitle_font.render("Scegli la tua macchina  ← →   Invio per confermare", True, WHITE)
+    screen.blit(title_text, (WIDTH // 2 - title_text.get_width() // 2, 100))
+
     selected_image = player_images[selected_index]
-    screen.blit(selected_image, (WIDTH // 2 - car_width // 2, HEIGHT // 2 - car_height // 2))
+    image_x = WIDTH // 2 - car_width // 2
+    image_y = HEIGHT // 2 - car_height // 2
+
+    car_diff_text = name_font.render(car_diff[selected_index], True, WHITE)
+    screen.blit(car_diff_text, (WIDTH // 2 - car_diff_text.get_width() // 2, image_y + car_height + 15))
+
+    pygame.draw.rect(screen, WHITE, (image_x - 5, image_y - 5, car_width + 10, car_height + 10), 2)
+
+    screen.blit(selected_image, (image_x, image_y))
 
     pygame.display.flip()
 
+    # Eventi
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
@@ -111,12 +142,34 @@ while selecting:
                 selected_index = (selected_index + 1) % len(player_images)
             if event.key == pygame.K_RETURN:
                 player_image = player_images[selected_index]
-                selecting = False
+                
+                if selected_index == 0:  # Molto facile
+                    enemy_speed = 5
+                elif selected_index == 1:  # Facile
+                    enemy_speed = 7
+                elif selected_index == 2:  # Media
+                    enemy_speed = 9
+                elif selected_index == 3:  # Difficile
+                    enemy_speed = 11
+                else:  # Molto difficile
+                    enemy_speed = 13
+
+                selecting = False 
+
 
 # Main loop
 running = True
 while running:
-    screen.fill(GRAY)
+    tile_width = bg_sx.get_width()
+    tile_height = bg_sx.get_height()
+
+    for y in range(0, HEIGHT, tile_height):
+        screen.blit(bg_sx, (0, y))  # sinistra
+        screen.blit(bg_dx, (WIDTH - bg_width, y))  # destra
+
+    road_x = bg_width
+    road_width = WIDTH - 2 * bg_width
+    screen.fill(GRAY, (road_x, 0, road_width, HEIGHT))
 
     # Eventi
     for event in pygame.event.get():
@@ -151,7 +204,8 @@ while running:
 
     # Disegna corsie
     for i in range(1, 5):
-        pygame.draw.line(screen, WHITE, (i * LANE_WIDTH, 0), (i * LANE_WIDTH, HEIGHT), 2)
+        x = road_x + i * (road_width // 5)
+        pygame.draw.line(screen, WHITE, (x, 0), (x, HEIGHT), 2)
 
     # Disegna tutto
     draw_player(player_x, player_y, player_image) 
