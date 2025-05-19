@@ -85,7 +85,33 @@ def check_collision(px, py):
     return False
 
 def is_out_of_bounds(px):
-    return px < 0 or px + car_width > WIDTH
+    return px < 0 or px + car_width > WIDTH 
+
+# Selezione macchina
+selected_index = 0
+selecting = True
+
+while selecting:
+    screen.fill(GRAY)
+
+    # Mostra macchina selezionata al centro
+    selected_image = player_images[selected_index]
+    screen.blit(selected_image, (WIDTH // 2 - car_width // 2, HEIGHT // 2 - car_height // 2))
+
+    pygame.display.flip()
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_LEFT:
+                selected_index = (selected_index - 1) % len(player_images)
+            if event.key == pygame.K_RIGHT:
+                selected_index = (selected_index + 1) % len(player_images)
+            if event.key == pygame.K_RETURN:
+                player_image = player_images[selected_index]
+                selecting = False
 
 # Main loop
 running = True
