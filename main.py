@@ -2,6 +2,7 @@ import pygame
 import random
 import sys
 
+# Inizializza pygame
 pygame.init()  
 
 # Schermo
@@ -10,25 +11,51 @@ LANE_WIDTH = WIDTH // 5
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Gioco della Macchinina")
 
-player_image = pygame.image.load("1_player.png").convert_alpha()
-enemy_image = pygame.image.load("4_blu.png").convert_alpha()
+player_images = [
+    pygame.image.load("1_player.png").convert_alpha(),
+    pygame.image.load("2_player.png").convert_alpha(),
+    pygame.image.load("3_player.png").convert_alpha(),
+    pygame.image.load("4_player.png").convert_alpha(),
+    pygame.image.load("5_player.png").convert_alpha(),
+]
+enemy_images = [
+    pygame.image.load("1_blu.png").convert_alpha(),
+    pygame.image.load("1_rosso.png").convert_alpha(),
+    pygame.image.load("1_verde.png").convert_alpha(),
+    pygame.image.load("2_blu.png").convert_alpha(),
+    pygame.image.load("2_rosso.png").convert_alpha(),
+    pygame.image.load("2_verde.png").convert_alpha(),
+    pygame.image.load("3_blu.png").convert_alpha(),
+    pygame.image.load("3_rosso.png").convert_alpha(),
+    pygame.image.load("3_verde.png").convert_alpha(),
+    pygame.image.load("4_blu.png").convert_alpha(),
+    pygame.image.load("4_rosso.png").convert_alpha(),
+    pygame.image.load("4_verde.png").convert_alpha(),
+    pygame.image.load("5_blu.png").convert_alpha(),
+    pygame.image.load("5_rosso.png").convert_alpha(),
+    pygame.image.load("5_verde.png").convert_alpha(),
+]
 # Colori
 WHITE = (255, 255, 255)
 GRAY = (50, 50, 50)
+RED = (200, 0, 0)
+BLUE = (0, 0, 200)
 
 # Clock
 clock = pygame.time.Clock()
 FPS = 60
 
 # Macchinina del giocatore
-car_width, car_height = 35, 70
+car_width, car_height = 45, 90 
 player_lane = 2
 player_x = player_lane * LANE_WIDTH + (LANE_WIDTH - car_width) // 2
 player_y = HEIGHT - car_height - 20
-player_speed = 5 
+player_speed = 7 
 
-player_image = pygame.transform.scale(player_image, (car_width, car_height))
-enemy_image = pygame.transform.scale(enemy_image, (car_width, car_height))
+player_images = [pygame.transform.scale(img, (car_width, car_height)) for img in player_images]
+
+player_image  = random.choice(player_images)     
+enemy_images = [pygame.transform.scale(img, (car_width, car_height)) for img in enemy_images]
 
 # Altri veicoli
 enemy_cars = []
@@ -36,21 +63,22 @@ enemy_timer = 0
 enemy_delay = 40
 enemy_speed = 5
 
-def draw_player(x, y):
-    screen.blit(player_image, (x, y))
+def draw_player(x, y, image):
+    screen.blit(image, (x, y))
 
-def draw_enemy(x, y):
-    screen.blit(enemy_image, (x, y))
+def draw_enemy(x, y, image):
+    screen.blit(image, (x, y))
 
 def spawn_enemy():
     lane = random.randint(0, 4)
     x = lane * LANE_WIDTH + (LANE_WIDTH - car_width) // 2
     y = -car_height
-    enemy_cars.append([x, y])
+    image = random.choice(enemy_images)
+    enemy_cars.append([x, y, image])
 
 def check_collision(px, py):
     player_rect = pygame.Rect(px, py, car_width, car_height)
-    for ex, ey in enemy_cars:
+    for ex, ey, _ in enemy_cars:
         enemy_rect = pygame.Rect(ex, ey, car_width, car_height)
         if player_rect.colliderect(enemy_rect):
             return True
@@ -100,11 +128,11 @@ while running:
         pygame.draw.line(screen, WHITE, (i * LANE_WIDTH, 0), (i * LANE_WIDTH, HEIGHT), 2)
 
     # Disegna tutto
-    draw_player(player_x, player_y)
-    for ex, ey in enemy_cars:
-        draw_enemy(ex, ey)
+    draw_player(player_x, player_y, player_image) 
+    for ex, ey, img in enemy_cars:
+        draw_enemy(ex, ey, img)
 
     pygame.display.flip()
-    clock.tick(FPS)
+    clock.tick(FPS) 
 
 pygame.quit()
