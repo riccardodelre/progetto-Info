@@ -12,11 +12,11 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Gioco della Macchinina")
 
 player_images = [
+    pygame.image.load("5_player.png").convert_alpha(),
     pygame.image.load("1_player.png").convert_alpha(),
-    pygame.image.load("2_player.png").convert_alpha(),
     pygame.image.load("3_player.png").convert_alpha(),
     pygame.image.load("4_player.png").convert_alpha(),
-    pygame.image.load("5_player.png").convert_alpha(),
+    pygame.image.load("2_player.png").convert_alpha()
 ]
 enemy_images = [
     pygame.image.load("1_blu.png").convert_alpha(),
@@ -36,12 +36,12 @@ enemy_images = [
     pygame.image.load("5_verde.png").convert_alpha(),
 ]
 
-bg = pygame.image.load("erba_fiori.png").convert_alpha()
-
-bg_width = 50
-bg = pygame.transform.scale(bg, (bg_width, bg.get_height()))  # solo in larghezza
-bg_sx = bg  # non scalare in altezza
-bg_dx = pygame.transform.flip(bg, True, False)
+bgs = [pygame.image.load("erba_fiori.png").convert_alpha(),
+      pygame.image.load("erba_verde.png").convert_alpha(),
+      pygame.image.load("erba_marrone.png").convert_alpha(),
+      pygame.image.load("erba_rossa.png").convert_alpha(),
+      pygame.image.load("erba_gialla.png").convert_alpha()
+]
 
 # Colori
 WHITE = (255, 255, 255)
@@ -54,18 +54,18 @@ clock = pygame.time.Clock()
 FPS = 60
 
 # Macchinina del giocatore
+bg_width = 50
 car_width, car_height = 50, 100 
 player_lane = 2
 road_x = bg_width
 road_width = WIDTH - 2 * bg_width
 player_x = road_x + player_lane * (road_width // 5) + ((road_width // 5) - car_width) // 2
 player_y = HEIGHT - car_height - 20
-player_speed = 5 
 
 # Altri veicoli
 enemy_cars = []
 enemy_timer = 0
-enemy_delay = 40
+enemy_delay = 30
 
 player_images = [pygame.transform.scale(img, (car_width, car_height)) for img in player_images]
 
@@ -94,7 +94,7 @@ def check_collision(px, py):
     return False
 
 def is_out_of_bounds(px):
-    return px < 0 or px + car_width > WIDTH 
+    return px < bg_width or px + car_width > (WIDTH-bg_width) 
 
 # Font per il testo
 title_font = pygame.font.SysFont(None, 60)      # Font grande per "MENU PRINCIPALE"
@@ -111,10 +111,10 @@ selecting = True
 while selecting:
     screen.fill((30, 30, 30)) 
     
-    main_title = title_font.render("MENU PRINCIPALE", True, WHITE)
+    main_title = title_font.render("MENU PRINCIPALE", True, RED)
     screen.blit(main_title, (WIDTH // 2 - main_title.get_width() // 2, 30))
 
-    title_text = subtitle_font.render("Scegli la tua macchina  ← →   Invio per confermare", True, WHITE)
+    title_text = subtitle_font.render("Scegli la tua macchina:   Invio per confermare", True, WHITE)
     screen.blit(title_text, (WIDTH // 2 - title_text.get_width() // 2, 100))
 
     selected_image = player_images[selected_index]
@@ -144,18 +144,27 @@ while selecting:
                 player_image = player_images[selected_index]
                 
                 if selected_index == 0:  # Molto facile
-                    enemy_speed = 5
+                    enemy_speed, max_speed, player_speed, enemy_delay  = 5, 8, 3, 40
+
                 elif selected_index == 1:  # Facile
-                    enemy_speed = 7
+                    enemy_speed, max_speed, player_speed, enemy_delay  = 7, 10, 4.5, 40
+
                 elif selected_index == 2:  # Media
-                    enemy_speed = 9
+                    enemy_speed, max_speed, player_speed, enemy_delay  = 9, 12, 6, 30
+
                 elif selected_index == 3:  # Difficile
-                    enemy_speed = 11
+                    enemy_speed, max_speed, player_speed, enemy_delay  = 11, 14, 7.5, 30
+
                 else:  # Molto difficile
-                    enemy_speed = 13
+                    enemy_speed, max_speed, player_speed, enemy_delay  = 13, 16, 9, 20
 
-                selecting = False 
+                bg = bgs[selected_index]
 
+                selecting = False
+
+bg = pygame.transform.scale(bg, (bg_width, bg.get_height()))  # solo in larghezza
+bg_sx = bg  # non scalare in altezza
+bg_dx = pygame.transform.flip(bg, True, False)
 
 # Main loop
 running = True
@@ -210,7 +219,11 @@ while running:
     # Disegna tutto
     draw_player(player_x, player_y, player_image) 
     for ex, ey, img in enemy_cars:
-        draw_enemy(ex, ey, img)
+        draw_enemy(ex, ey, img) 
+
+    # Aggiorna la velocità
+    if enemy_speed < max_speed:
+        enemy_speed += 0.005 
 
     pygame.display.flip()
     clock.tick(FPS) 
