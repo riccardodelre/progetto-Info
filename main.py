@@ -133,7 +133,7 @@ while selecting:
     image_x = WIDTH // 2 - car_width // 2
     image_y = HEIGHT // 2 - car_height // 2
 
-    car_diff_text = name_font.render(car_diff[selected_index], True, YELLOW)
+    car_diff_text = name_font.render(car_diff[selected_index], True, ORANGE)
     screen.blit(car_diff_text, (WIDTH // 2 - car_diff_text.get_width() // 2, image_y + car_height + 15))
 
     pygame.draw.rect(screen, WHITE, (image_x - 5, image_y - 5, car_width + 10, car_height + 10), 2) 
@@ -271,13 +271,17 @@ while end_screen:
     if not Win:
         main_title = title_font.render("GAME OVER", True, RED)
         sub_text = subtitle_font.render(f"Punti: {points}", True, WHITE)
+        image = pygame.image.load("image_loser.png").convert_alpha()
 
     else :
         main_title = title_font.render("HAI VINTO", True, RED)
         sub_text = subtitle_font.render("Congratulazioni! Punti: 100", True, YELLOW)
+        image = pygame.image.load("image_winner.png").convert_alpha()
 
     screen.blit(main_title, (WIDTH // 2 - main_title.get_width() // 2, 30))
     screen.blit(sub_text, (WIDTH // 2 - sub_text.get_width() // 2, 100))
+    image = pygame.transform.scale(image, (200, 200))
+    screen.blit(image, (WIDTH // 2 - image.get_width() // 2, HEIGHT // 2 - image.get_height() // 2))
     pygame.display.flip()
 
     for event in pygame.event.get():
