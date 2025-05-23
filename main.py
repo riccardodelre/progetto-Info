@@ -48,6 +48,8 @@ WHITE = (255, 255, 255)
 GRAY = (50, 50, 50)
 RED = (200, 0, 0)
 BLUE = (0, 0, 200)
+YELLOW = (255, 255, 0) 
+ORANGE = (255, 165, 0)
 
 # Clock
 clock = pygame.time.Clock()
@@ -61,6 +63,10 @@ road_x = bg_width
 road_width = WIDTH - 2 * bg_width
 player_x = road_x + player_lane * (road_width // 5) + ((road_width // 5) - car_width) // 2
 player_y = HEIGHT - car_height - 20
+
+
+#Vittoria
+Win = True
 
 # Altri veicoli
 enemy_cars = []
@@ -97,9 +103,15 @@ def is_out_of_bounds(px):
     return px < bg_width or px + car_width > (WIDTH-bg_width) 
 
 # Font per il testo
-title_font = pygame.font.SysFont(None, 60)      # Font grande per "MENU PRINCIPALE"
-subtitle_font = pygame.font.SysFont(None, 36)   # fon per "Scegli la tua macchina"
-name_font = pygame.font.SysFont(None, 28)       # font per i nomi delle macchine
+title_font = pygame.font.SysFont(None, 80)      # Font grande per "MENU PRINCIPALE"
+subtitle_font = pygame.font.SysFont(None, 36)   # Fon per "Scegli la tua macchina"
+name_font = pygame.font.SysFont(None, 28)       # Font per i nomi delle macchine
+points_font = pygame.font.SysFont(None, 40)     #Font per i punti 
+
+# Frecce nel menù
+right_arrow = pygame.image.load("freccia.png").convert_alpha()
+right_arrow = pygame.transform.scale(right_arrow, (50, 50)) 
+left_arrow = pygame.transform.flip(right_arrow, True, False) 
 
 #Difficoltà delle auto
 car_diff = ["Molto Facile", "Facile", "Media", "Difficile", "Molto Difficile"]
@@ -114,17 +126,20 @@ while selecting:
     main_title = title_font.render("MENU PRINCIPALE", True, RED)
     screen.blit(main_title, (WIDTH // 2 - main_title.get_width() // 2, 30))
 
-    title_text = subtitle_font.render("Scegli la tua macchina:   Invio per confermare", True, WHITE)
+    title_text = subtitle_font.render("Scegli la tua macchina - Invio per confermare", True, WHITE)
     screen.blit(title_text, (WIDTH // 2 - title_text.get_width() // 2, 100))
 
     selected_image = player_images[selected_index]
     image_x = WIDTH // 2 - car_width // 2
     image_y = HEIGHT // 2 - car_height // 2
 
-    car_diff_text = name_font.render(car_diff[selected_index], True, WHITE)
+    car_diff_text = name_font.render(car_diff[selected_index], True, YELLOW)
     screen.blit(car_diff_text, (WIDTH // 2 - car_diff_text.get_width() // 2, image_y + car_height + 15))
 
-    pygame.draw.rect(screen, WHITE, (image_x - 5, image_y - 5, car_width + 10, car_height + 10), 2)
+    pygame.draw.rect(screen, WHITE, (image_x - 5, image_y - 5, car_width + 10, car_height + 10), 2) 
+
+    screen.blit(left_arrow, (image_x - 80, image_y + car_height // 2 - 15))
+    screen.blit(right_arrow, (image_x + car_width + 30, image_y + car_height // 2 - 15))
 
     screen.blit(selected_image, (image_x, image_y))
 
@@ -163,12 +178,18 @@ while selecting:
                 selecting = False
 
 bg = pygame.transform.scale(bg, (bg_width, bg.get_height()))  # solo in larghezza
-bg_sx = bg  # non scalare in altezza
+bg_sx = bg  
 bg_dx = pygame.transform.flip(bg, True, False)
 
 # Main loop
+cicles = 0
+points = 0
 running = True
+
 while running:
+    cicles += 1
+    if cicles % 35 == 0:
+        points += 1
     tile_width = bg_sx.get_width()
     tile_height = bg_sx.get_height()
 
@@ -184,6 +205,9 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+            Win = False
+            pygame.quit()
+            sys.exit()
 
     # Input
     keys = pygame.key.get_pressed()
@@ -207,9 +231,8 @@ while running:
 
     # Collisione
     if check_collision(player_x, player_y) or is_out_of_bounds(player_x):
-        print("Game Over")
-        pygame.quit()
-        sys.exit()
+        running = False
+        Win = False
 
     # Disegna corsie
     for i in range(1, 5):
@@ -224,8 +247,42 @@ while running:
     # Aggiorna la velocità
     if enemy_speed < max_speed:
         enemy_speed += 0.005 
+    
+    #Disegna punti
+    if points >= 90:
+        points_text = points_font.render(f"{points:03}", True, YELLOW)
+    else:
+        points_text = points_font.render(f"{points:03}", True, WHITE)
+    
+    screen.blit(points_text, (WIDTH // 2 - points_text.get_width() // 2, 10))
 
+    #Controlla Vittoria
+    if points == 100:
+        running = False
+    
     pygame.display.flip()
     clock.tick(FPS) 
 
+# Mostra schermata finale
+end_screen = True
+while end_screen:
+    screen.fill((30, 30, 30))
+    
+    if not Win:
+        main_title = title_font.render("GAME OVER", True, RED)
+        sub_text = subtitle_font.render(f"Punti: {points}", True, WHITE)
+
+    else :
+        main_title = title_font.render("HAI VINTO", True, RED)
+        sub_text = subtitle_font.render("Congratulazioni! Punti: 100", True, YELLOW)
+
+    screen.blit(main_title, (WIDTH // 2 - main_title.get_width() // 2, 30))
+    screen.blit(sub_text, (WIDTH // 2 - sub_text.get_width() // 2, 100))
+    pygame.display.flip()
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            end_screen = False
+
 pygame.quit()
+sys.exit()
