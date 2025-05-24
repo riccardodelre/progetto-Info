@@ -1,7 +1,8 @@
 import pygame
 import random
+from Costants import CAR_WIDTH, CAR_HEIGHT
 
-def spawn_enemy(road_x, road_width, car_width, car_height, enemy_cars):
+def spawn_enemy(road_x, road_width, enemy_cars):
     
     enemy_images = [
     pygame.image.load("1_blu.png").convert_alpha(),
@@ -20,11 +21,11 @@ def spawn_enemy(road_x, road_width, car_width, car_height, enemy_cars):
     pygame.image.load("5_rosso.png").convert_alpha(),
     pygame.image.load("5_verde.png").convert_alpha(),
 ]
-    enemy_images = [pygame.transform.scale(img, (car_width, car_height)) for img in enemy_images]
+    enemy_images = [pygame.transform.scale(img, (CAR_WIDTH, CAR_HEIGHT)) for img in enemy_images]
 
     lane = random.randint(0, 4)
-    x = road_x + lane * (road_width // 5) + ((road_width // 5) - car_width) // 2
-    y = -car_height
+    x = road_x + lane * (road_width // 5) + ((road_width // 5) - CAR_WIDTH) // 2
+    y = -CAR_HEIGHT
     image = random.choice(enemy_images)
     enemy_cars.append([x, y, image])
 

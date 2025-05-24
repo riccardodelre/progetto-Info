@@ -1,14 +1,10 @@
 import pygame
-
-def menu(screen, width, height):
-    WHITE = (255, 255, 255)
-    RED = (200, 0, 0)
-    ORANGE = (255, 165, 0) 
+from Costants import WIDTH, HEIGHT, CAR_WIDTH, CAR_HEIGHT, WHITE, RED, ORANGE
+def menu(screen):
 
     #Difficoltà delle auto
     car_diff = ["Molto Facile", "Facile", "Media", "Difficile", "Molto Difficile"] 
     
-
     # Macchinina del giocatore
     player_images = [
     pygame.image.load("5_player.png").convert_alpha(),
@@ -19,16 +15,12 @@ def menu(screen, width, height):
     ]
 
     # Ridimensiona le immagini
-    car_width, car_height = 50, 100 
-    player_images = [pygame.transform.scale(img, (car_width, car_height)) for img in player_images]   
+    player_images = [pygame.transform.scale(img, (CAR_WIDTH, CAR_HEIGHT)) for img in player_images]   
 
     # Font per il testo
     title_font = pygame.font.SysFont(None, 80)      # Font grande per "MENU PRINCIPALE"
     subtitle_font = pygame.font.SysFont(None, 36)   # Fon per "Scegli la tua macchina"
     name_font = pygame.font.SysFont(None, 28)       # Font per i nomi delle macchine
-    points_font = pygame.font.SysFont(None, 40)     #Font per i punti 
-
-    car_width, car_height = 50, 100
 
     bgs = [pygame.image.load("erba_fiori.png").convert_alpha(),
       pygame.image.load("erba_verde.png").convert_alpha(),
@@ -49,21 +41,21 @@ def menu(screen, width, height):
         screen.fill((30, 30, 30))
 
         main_title = title_font.render("MENU PRINCIPALE", True, RED)
-        screen.blit(main_title, (width // 2 - main_title.get_width() // 2, 30))
+        screen.blit(main_title, (WIDTH // 2 - main_title.get_width() // 2, 30))
 
         title_text = subtitle_font.render("Scegli la tua macchina - Invio per confermare", True, WHITE)
-        screen.blit(title_text, (width // 2 - title_text.get_width() // 2, 100))
+        screen.blit(title_text, (WIDTH // 2 - title_text.get_width() // 2, 100))
 
         selected_image = player_images[selected_index]
-        image_x = width // 2 - car_width // 2
-        image_y = height // 2 - car_height // 2
+        image_x = WIDTH // 2 - CAR_WIDTH // 2
+        image_y = HEIGHT // 2 - CAR_WIDTH // 2
 
         car_diff_text = name_font.render(car_diff[selected_index], True, ORANGE)
-        screen.blit(car_diff_text, (width // 2 - car_diff_text.get_width() // 2, image_y + car_height + 15))
+        screen.blit(car_diff_text, (WIDTH // 2 - car_diff_text.get_width() // 2, image_y + CAR_HEIGHT + 15))
 
-        pygame.draw.rect(screen, WHITE, (image_x - 5, image_y - 5, car_width + 10, car_height + 10), 2)
-        screen.blit(left_arrow, (image_x - 80, image_y + car_height // 2 - 15))
-        screen.blit(right_arrow, (image_x + car_width + 30, image_y + car_height // 2 - 15))
+        pygame.draw.rect(screen, WHITE, (image_x - 5, image_y - 5, CAR_WIDTH + 10, CAR_HEIGHT + 10), 2)
+        screen.blit(left_arrow, (image_x - 80, image_y + CAR_HEIGHT // 2 - 15))
+        screen.blit(right_arrow, (image_x + CAR_WIDTH + 30, image_y + CAR_HEIGHT // 2 - 15))
         screen.blit(selected_image, (image_x, image_y))
 
         pygame.display.flip()

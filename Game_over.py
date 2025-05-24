@@ -1,9 +1,7 @@
-import pygame
+import pygame 
+from Costants import WIDTH, HEIGHT, WHITE, RED, YELLOW
 
-def end_screen(screen, points, win, width, height):
-    WHITE = (255, 255, 255)
-    RED = (200, 0, 0)
-    YELLOW = (255, 255, 0)
+def end_screen(screen, points, win):
 
     title_font = pygame.font.SysFont(None, 80)      # Font grande per "MENU PRINCIPALE"
     subtitle_font = pygame.font.SysFont(None, 36)   # Fon per "Scegli la tua macchina"
@@ -22,11 +20,11 @@ def end_screen(screen, points, win, width, height):
             sub_text = subtitle_font.render("Punti: 100 Congratulazioni!", True, YELLOW)
             image = pygame.image.load("image_winner.png").convert_alpha()
 
-        screen.blit(main_title, (width // 2 - main_title.get_width() // 2, 30))
-        screen.blit(sub_text, (width // 2 - sub_text.get_width() // 2, 100))
+        screen.blit(main_title, (WIDTH // 2 - main_title.get_width() // 2, 30))
+        screen.blit(sub_text, (WIDTH // 2 - sub_text.get_width() // 2, 100))
 
         image = pygame.transform.scale(image, (200, 200))
-        screen.blit(image, (width // 2 - image.get_width() // 2, height // 2 - image.get_height() // 2))
+        screen.blit(image, (WIDTH // 2 - image.get_width() // 2, HEIGHT // 2 - image.get_height() // 2))
 
         pygame.display.flip()
 

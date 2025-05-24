@@ -1,21 +1,22 @@
 import pygame
+from Costants import BG_WIDTH, WIDTH, CAR_WIDTH, CAR_HEIGHT
 
 class Player:
-    def __init__(self, image, x, y, speed, car_width, car_height):
+    def __init__(self, image, x, y, speed):
         self.image = image
         self.x = x
         self.y = y
         self.speed = speed
-        self.car_width = car_width
-        self.car_height = car_height
+        self.car_width = CAR_WIDTH
+        self.car_height = CAR_HEIGHT
 
     def draw(self, screen):
         screen.blit(self.image, (self.x, self.y))
 
-    def move(self, keys, bg_width, width):
-        if keys[pygame.K_LEFT] and self.x > bg_width:
+    def move(self, keys):
+        if keys[pygame.K_LEFT] and self.x > BG_WIDTH:
             self.x -= self.speed
-        if keys[pygame.K_RIGHT] and self.x + self.car_width < width - bg_width:
+        if keys[pygame.K_RIGHT] and self.x + self.car_width < WIDTH - BG_WIDTH:
             self.x += self.speed
 
     def check_collision(self, enemy_cars):
