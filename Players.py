@@ -17,7 +17,15 @@ class Player:
         if keys[pygame.K_LEFT] and self.x > BG_WIDTH:
             self.x -= self.speed
         if keys[pygame.K_RIGHT] and self.x + self.car_width < WIDTH - BG_WIDTH:
-            self.x += self.speed
+            self.x += self.speed 
+
+        left_limit = BG_WIDTH
+        right_limit = WIDTH - BG_WIDTH - self.car_width
+
+        if self.x < left_limit or self.x > right_limit:
+            return True  
+
+        return False
 
     def check_collision(self, enemy_cars):
         player_rect = pygame.Rect(self.x, self.y, self.car_width, self.car_height)

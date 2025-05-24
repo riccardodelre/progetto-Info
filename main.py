@@ -60,7 +60,10 @@ def main():
 
         # Input
         keys = pygame.key.get_pressed()
-        player.move(keys) 
+        out_of_road = player.move(keys)
+        if out_of_road:
+            running = False
+            Win = False 
 
         # Spawning nemici
         enemy_timer += 1

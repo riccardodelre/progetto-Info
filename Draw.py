@@ -34,7 +34,7 @@ def draw_points(screen, points):
 def draw_speed(screen, enemy_speed):
     font_speed = pygame.font.SysFont(None, 30)
     speed = int(enemy_speed * 10)
-    text = font_speed.render(f"{speed} Km/h", True, WHITE)
-    x = WIDTH * 3 // 5 + 5  
+    text = font_speed.render(f"{speed:03} Km/h", True, WHITE)
+    x = WIDTH * 3 // 5 - 5  
     y = 10
     screen.blit(text, (x, y))
