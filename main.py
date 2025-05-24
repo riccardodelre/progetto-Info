@@ -1,10 +1,9 @@
 import pygame
-import random
 import sys 
 from Game_over import end_screen 
 from Menu import menu 
 from Enemies import spawn_enemy, draw_enemy 
-from Player import draw_player, check_collision, is_out_of_bounds
+from Players import Player
 
 # Inizializza pygame
 pygame.init()  
@@ -38,7 +37,11 @@ enemy_cars = []
 enemy_timer = 0
 enemy_delay = 30 
 
-player_image, bg, enemy_speed, max_speed, player_speed, enemy_delay = menu( screen, WIDTH, HEIGHT)
+# Menù
+player_image, bg, enemy_speed, max_speed, player_speed, enemy_delay = menu( screen, WIDTH, HEIGHT) 
+
+# Player
+player = Player(player_image, player_x, player_y, player_speed, car_width, car_height)
 
 bg = pygame.transform.scale(bg, (bg_width, bg.get_height()))  # solo in larghezza
 bg_sx = bg  
@@ -79,10 +82,7 @@ while running:
 
     # Input
     keys = pygame.key.get_pressed()
-    if keys[pygame.K_LEFT]:
-        player_x -= player_speed
-    if keys[pygame.K_RIGHT]:
-        player_x += player_speed
+    player.move(keys, bg_width, WIDTH) 
 
     # Spawning nemici
     enemy_timer += 1
@@ -98,7 +98,7 @@ while running:
     enemy_cars = [e for e in enemy_cars if e[1] < HEIGHT]
 
     # Controlla collisioni
-    if check_collision(player_x, player_y, enemy_cars, car_width, car_height) or is_out_of_bounds(player_x, bg_width, WIDTH, car_width):
+    if player.check_collision(enemy_cars):
         running = False
         Win = False
 
@@ -108,7 +108,7 @@ while running:
         pygame.draw.line(screen, WHITE, (x, 0), (x, HEIGHT), 2)
 
     # Disegna tutto
-    draw_player(player_x, player_y, player_image, screen) 
+    player.draw(screen)
     for ex, ey, img in enemy_cars:
         draw_enemy(screen, ex, ey, img) 
 
