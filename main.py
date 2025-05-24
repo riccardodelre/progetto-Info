@@ -12,6 +12,11 @@ def main():
     # Inizializza pygame
     pygame.init()  
 
+    # Musica
+    pygame.mixer.init()
+    pygame.mixer.music.load("musichetta.mp3")
+    pygame.mixer.music.play(-1)
+
     # Schermo
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption("Gioco della Macchinina")
@@ -112,5 +117,6 @@ def main():
 if __name__ == "__main__":
         main()
 
+pygame.mixer.music.stop()
 pygame.quit()
 sys.exit() 
