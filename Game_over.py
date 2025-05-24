@@ -1,12 +1,16 @@
 import pygame 
-from Costants import WIDTH, HEIGHT, WHITE, RED, YELLOW
+import sys
+from Costants import WIDTH, HEIGHT, WHITE, RED, YELLOW, ENEMY_SPAWN_RATE
+
+def update_points(cicles, current_points):
+    if cicles % ENEMY_SPAWN_RATE == 0:
+        return current_points + 1
+    return current_points
 
 def end_screen(screen, points, win):
+    title_font = pygame.font.SysFont(None, 80)
+    subtitle_font = pygame.font.SysFont(None, 36)
 
-    title_font = pygame.font.SysFont(None, 80)      # Font grande per "MENU PRINCIPALE"
-    subtitle_font = pygame.font.SysFont(None, 36)   # Fon per "Scegli la tua macchina"
-
-    # Schermo finale
     end_screen = True
     while end_screen:
         screen.fill((30, 30, 30))
@@ -26,8 +30,18 @@ def end_screen(screen, points, win):
         image = pygame.transform.scale(image, (200, 200))
         screen.blit(image, (WIDTH // 2 - image.get_width() // 2, HEIGHT // 2 - image.get_height() // 2))
 
+        instruction = subtitle_font.render("Premi INVIO per ricominciare o ESC per uscire", True, WHITE)
+        screen.blit(instruction, (WIDTH // 2 - instruction.get_width() // 2, HEIGHT - 60))
+
         pygame.display.flip()
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                end_screen = False
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    return True  
+                elif event.key == pygame.K_ESCAPE:
+                    pygame.quit()
+                    sys.exit()

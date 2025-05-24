@@ -72,7 +72,7 @@ def menu(screen):
                 if event.key == pygame.K_RETURN:
                     bg = bgs[selected_index]
                     if selected_index == 0:
-                        return player_images[selected_index], bg, 5, 8, 3, 40 # Molto Facile
+                        return player_images[selected_index], bg, 5, 8, 3.5, 40 # Molto Facile
                     elif selected_index == 1:
                         return player_images[selected_index], bg, 7, 10, 4.5, 40 # Facile
                     elif selected_index == 2:

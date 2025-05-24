@@ -24,4 +24,17 @@ def draw_points(screen, points):
     points_font = pygame.font.SysFont(None, 40)     
     color = YELLOW if points >= 90 else WHITE
     text = points_font.render(f"{points:03}", True, color)
-    screen.blit(text, (WIDTH // 2 - text.get_width() // 2, 10))
+
+    lane_index = 1 
+    lane_width = WIDTH // 5
+    x = lane_index * lane_width + (lane_width - text.get_width()) // 2 + 20
+
+    screen.blit(text, (x, 10))
+
+def draw_speed(screen, enemy_speed):
+    font_speed = pygame.font.SysFont(None, 30)
+    speed = int(enemy_speed * 10)
+    text = font_speed.render(f"{speed} Km/h", True, WHITE)
+    x = WIDTH * 3 // 5 + 5  
+    y = 10
+    screen.blit(text, (x, y))

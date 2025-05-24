@@ -1,108 +1,113 @@
 import pygame
 import sys 
-from Game_over import end_screen 
+from Game_over import end_screen, update_points 
 from Menu import menu 
-from Enemies import spawn_enemy, draw_enemy 
+from Enemies import spawn_enemy, draw_enemy, update_enemies 
 from Players import Player 
-from Draw import draw_background, draw_lanes, draw_points 
-from Costants import WIDTH, HEIGHT, FPS, CAR_WIDTH, CAR_HEIGHT, BG_WIDTH, MAX_POINTS, ACCELERATION, ENEMY_SPAWN_RATE
+from Draw import draw_background, draw_lanes, draw_points, draw_speed 
+from Costants import WIDTH, HEIGHT, FPS, CAR_WIDTH, CAR_HEIGHT, BG_WIDTH, MAX_POINTS, ACCELERATION
 
-# Inizializza pygame
-pygame.init()  
+def main():
 
-# Schermo
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Gioco della Macchinina")
+    # Inizializza pygame
+    pygame.init()  
 
-# Clock
-clock = pygame.time.Clock()
+    # Schermo
+    screen = pygame.display.set_mode((WIDTH, HEIGHT))
+    pygame.display.set_caption("Gioco della Macchinina")
 
-# Macchinina del giocatore
-player_lane = 2
-road_x = BG_WIDTH 
-road_width = WIDTH - 2 * BG_WIDTH
-player_x = road_x + player_lane * (road_width // 5) + ((road_width // 5) - CAR_WIDTH) // 2
-player_y = HEIGHT - CAR_HEIGHT - 20
+    # Clock
+    clock = pygame.time.Clock()
 
-# Altri veicoli
-enemy_cars = []
-enemy_timer = 0
+    # Macchinina del giocatore
+    player_lane = 2
+    road_x = BG_WIDTH 
+    road_width = WIDTH - 2 * BG_WIDTH
+    player_x = road_x + player_lane * (road_width // 5) + ((road_width // 5) - CAR_WIDTH) // 2
+    player_y = HEIGHT - CAR_HEIGHT - 20
 
-# Menù
-player_image, bg, enemy_speed, max_speed, player_speed, enemy_delay = menu( screen) 
+    # Altri veicoli
+    enemy_cars = []
+    enemy_timer = 0
 
-# Player
-player = Player(player_image, player_x, player_y, player_speed) 
+    # Menù
+    player_image, bg, enemy_speed, max_speed, player_speed, enemy_delay = menu (screen) 
 
-#Vittoria
-Win = True
+    # Player
+    player = Player(player_image, player_x, player_y, player_speed)  
 
-# Main loop
-cicles = 0
-points = 0
-running = True
+    #Vittoria
+    Win = True
 
-while running:
-    cicles += 1
-    if cicles % ENEMY_SPAWN_RATE == 0:
-        points += 1
-    
-    draw_background(screen, bg)
+    # Main loop
+    cicles = 0
+    points = 0
+    running = True
 
-    # Eventi
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
+    while running:
+        cicles += 1
+        points = update_points(cicles, points)
+        
+        draw_background(screen, bg)
+
+        # Eventi
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+                Win = False
+                pygame.quit()
+                sys.exit()
+
+        # Input
+        keys = pygame.key.get_pressed()
+        player.move(keys) 
+
+        # Spawning nemici
+        enemy_timer += 1
+        if enemy_timer >= enemy_delay:
+            spawn_enemy(road_x, road_width, enemy_cars)
+            enemy_timer = 0
+
+        # Muovi nemici
+        enemy_cars = update_enemies(enemy_cars, enemy_speed)
+
+        # Controllo collisioni
+        if player.check_collision(enemy_cars):
             running = False
             Win = False
-            pygame.quit()
-            sys.exit()
 
-    # Input
-    keys = pygame.key.get_pressed()
-    player.move(keys) 
+        # Disegna corsie
+        draw_lanes(screen, road_x, road_width)
 
-    # Spawning nemici
-    enemy_timer += 1
-    if enemy_timer >= enemy_delay:
-        spawn_enemy(road_x, road_width, enemy_cars)
-        enemy_timer = 0
+        # Disegna tutto
+        player.draw(screen)
+        for ex, ey, img in enemy_cars:
+            draw_enemy(screen, ex, ey, img) 
 
-    # Muovi nemici
-    for enemy in enemy_cars:
-        enemy[1] += enemy_speed
+        # Aggiorna la velocità
+        if enemy_speed < max_speed:
+            enemy_speed += ACCELERATION 
+        
+        #Disegna punti
+        draw_points(screen, points)
+        #Disegna velocità
+        draw_speed(screen, enemy_speed)
 
-    #Rimuovi nemici fuori dallo schermo
-    enemy_cars = [e for e in enemy_cars if e[1] < HEIGHT]
+        #Controlla Vittoria
+        if points == MAX_POINTS:
+            running = False
+        
+        pygame.display.flip()
+        clock.tick(FPS) 
 
-    # Controllo collisioni
-    if player.check_collision(enemy_cars):
-        running = False
-        Win = False
-
-    # Disegna corsie
-    draw_lanes(screen, road_x, road_width)
-
-    # Disegna tutto
-    player.draw(screen)
-    for ex, ey, img in enemy_cars:
-        draw_enemy(screen, ex, ey, img) 
-
-    # Aggiorna la velocità
-    if enemy_speed < max_speed:
-        enemy_speed += ACCELERATION 
+    # Mostra schermata finale
+    restart = end_screen(screen, points, Win)
     
-    #Disegna punti
-    draw_points(screen, points)
+    if restart:
+        main() 
 
-    #Controlla Vittoria
-    if points == MAX_POINTS:
-        running = False
-    
-    pygame.display.flip()
-    clock.tick(FPS) 
-
-# Mostra schermata finale
-end_screen(screen, points, Win)
+if __name__ == "__main__":
+        main()
 
 pygame.quit()
-sys.exit()
+sys.exit() 

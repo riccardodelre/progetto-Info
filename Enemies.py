@@ -1,6 +1,6 @@
 import pygame
 import random
-from Costants import CAR_WIDTH, CAR_HEIGHT
+from Costants import CAR_WIDTH, CAR_HEIGHT, HEIGHT
 
 def spawn_enemy(road_x, road_width, enemy_cars):
     
@@ -31,3 +31,8 @@ def spawn_enemy(road_x, road_width, enemy_cars):
 
 def draw_enemy(screen, x, y, image):
     screen.blit(image, (x, y))
+
+def update_enemies(enemy_cars, enemy_speed):
+    for enemy in enemy_cars:
+        enemy[1] += enemy_speed
+    return [e for e in enemy_cars if e[1] < HEIGHT]
