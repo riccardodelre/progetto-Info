@@ -25,7 +25,7 @@ def menu(screen):
     bgs = [pygame.image.load("erba_fiori.png").convert_alpha(),
       pygame.image.load("erba_verde.png").convert_alpha(),
       pygame.image.load("erba_marrone.png").convert_alpha(),
-      pygame.image.load("erba_rossa.png").convert_alpha(),
+      pygame.image.load("erba_fiori2.png").convert_alpha(),
       pygame.image.load("erba_gialla.png").convert_alpha()
     ]
 
@@ -72,13 +72,13 @@ def menu(screen):
                 if event.key == pygame.K_RETURN:
                     bg = bgs[selected_index]
                     if selected_index == 0:
-                        return player_images[selected_index], bg, 5, 8, 3.5, 40 # Molto Facile
+                        return player_images[selected_index], bg, 5, 9, 3.5, 40 # Molto Facile
                     elif selected_index == 1:
-                        return player_images[selected_index], bg, 7, 10, 4.5, 40 # Facile
+                        return player_images[selected_index], bg, 7, 11, 4.5, 35 # Facile
                     elif selected_index == 2:
-                        return player_images[selected_index], bg, 9, 12, 6, 30 # Media
+                        return player_images[selected_index], bg, 9, 13, 6, 30 # Media
                     elif selected_index == 3:
-                        return player_images[selected_index], bg, 11, 14, 7.5, 30 # Difficile
+                        return player_images[selected_index], bg, 11, 15, 7.5, 25 # Difficile
                     else:
-                        return player_images[selected_index], bg, 13, 16, 9, 20 # Molto Difficile
+                        return player_images[selected_index], bg, 13, 17, 9, 20 # Molto Difficile
     return None, None, None, None, None, None, None 

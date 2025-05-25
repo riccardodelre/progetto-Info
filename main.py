@@ -5,17 +5,12 @@ from Menu import menu
 from Enemies import spawn_enemy, draw_enemy, update_enemies 
 from Players import Player 
 from Draw import draw_background, draw_lanes, draw_points, draw_speed 
-from Costants import WIDTH, HEIGHT, FPS, CAR_WIDTH, CAR_HEIGHT, BG_WIDTH, MAX_POINTS, ACCELERATION
+from Costants import WIDTH, HEIGHT, FPS, CAR_WIDTH, CAR_HEIGHT, BG_WIDTH, MAX_POINTS, ACCELERATION, PLAYER_LANE
 
 def main():
 
     # Inizializza pygame
     pygame.init()  
-
-    # Musica
-    pygame.mixer.init()
-    pygame.mixer.music.load("musichetta.mp3")
-    pygame.mixer.music.play(-1)
 
     # Schermo
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -25,10 +20,9 @@ def main():
     clock = pygame.time.Clock()
 
     # Macchinina del giocatore
-    player_lane = 2
     road_x = BG_WIDTH 
     road_width = WIDTH - 2 * BG_WIDTH
-    player_x = road_x + player_lane * (road_width // 5) + ((road_width // 5) - CAR_WIDTH) // 2
+    player_x = road_x + PLAYER_LANE * (road_width // 5) + ((road_width // 5) - CAR_WIDTH) // 2
     player_y = HEIGHT - CAR_HEIGHT - 20
 
     # Altri veicoli
@@ -47,6 +41,7 @@ def main():
     # Main loop
     cicles = 0
     points = 0
+    last_point_update = 0
     running = True
 
     while running:
@@ -70,8 +65,13 @@ def main():
             running = False
             Win = False 
 
-        # Spawning nemici
+    # Spawning nemici
         enemy_timer += 1
+    
+
+        if points % 20 == 0 and points != 0 and points != last_point_update and enemy_delay > 10:
+            enemy_delay -= 1
+            last_point_update = points
         if enemy_timer >= enemy_delay:
             spawn_enemy(road_x, road_width, enemy_cars)
             enemy_timer = 0
@@ -94,7 +94,7 @@ def main():
 
         # Aggiorna la velocità
         if enemy_speed < max_speed:
-            enemy_speed += ACCELERATION 
+            enemy_speed += (enemy_speed * ACCELERATION) 
         
         #Disegna punti
         draw_points(screen, points)
@@ -115,8 +115,11 @@ def main():
         main() 
 
 if __name__ == "__main__":
-        main()
-
-pygame.mixer.music.stop()
-pygame.quit()
-sys.exit() 
+     # Musica
+    pygame.mixer.init()
+    pygame.mixer.music.load("musichetta.mp3")
+    pygame.mixer.music.play(-1)
+    main()
+    pygame.mixer.music.stop()
+    pygame.quit()
+    sys.exit() 
