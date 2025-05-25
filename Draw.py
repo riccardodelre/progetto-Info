@@ -23,7 +23,7 @@ def draw_lanes(screen, road_x, road_width):
 def draw_points(screen, points): 
     points_font = pygame.font.SysFont(None, 40)     
     color = YELLOW if points >= 90 else WHITE
-    text = points_font.render(f"{points:03}", True, color)
+    text = points_font.render(f"{points:02}", True, color)
 
     lane_index = 1 
     lane_width = WIDTH // 5
