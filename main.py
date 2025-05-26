@@ -24,6 +24,7 @@ def main():
     road_width = WIDTH - 2 * BG_WIDTH
     player_x = road_x + PLAYER_LANE * (road_width // 5) + ((road_width // 5) - CAR_WIDTH) // 2
     player_y = HEIGHT - CAR_HEIGHT - 20
+    Win = True
 
     # Altri veicoli
     enemy_cars = []
@@ -34,9 +35,6 @@ def main():
 
     # Player
     player = Player(player_image, player_x, player_y, player_speed)  
-
-    #Vittoria
-    Win = True
 
     # Main loop
     cicles = 0
@@ -67,7 +65,6 @@ def main():
 
     # Spawning nemici
         enemy_timer += 1
-    
 
         if points % 20 == 0 and points != 0 and points != last_point_update and enemy_delay > 10:
             enemy_delay -= 1
