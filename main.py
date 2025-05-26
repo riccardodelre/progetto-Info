@@ -1,5 +1,5 @@
-import pygame
-import sys 
+import pygame, sys
+from pygame.locals import K_ESCAPE
 from Game_over import end_screen, update_points 
 from Menu import menu 
 from Enemies import spawn_enemy, draw_enemy, update_enemies 
@@ -50,7 +50,7 @@ def main():
 
         # Eventi
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
+            if event.type == pygame.QUIT or event.type == K.ESCAPE:
                 running = False
                 Win = False
                 pygame.quit()
